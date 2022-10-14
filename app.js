@@ -1,8 +1,9 @@
-// Hoje 13/10/2022 revisando a aula 01 - Cadastrando novos usuarios 
-// hoje 14/10/2022 - Gravando os dados e atualizando no github
+// hoje 14/10/2022 Até aula 03 - incluindo no bak insominia e lido no Browser
 
-import React ,{useState,useRef} from "react" ;
-import axios from "axios" ;
+
+
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
 import {
   Container,
@@ -21,69 +22,79 @@ import Trash from './assets/trash.svg'
 
 
 function App() {
-   const [users,setUsers]=useState([]);
-   const inputName=useRef();
-   const inputAge=useRef();
-
-   // Criando novo estado , nome e idade :
-   //const  [name,setName]=useState();
-  // const  [age,setAge]=useState();
+  const [users, setUsers] = useState([]);
+  const inputName = useRef();
+  const inputAge = useRef();
 
 
-   async function addNewUser() {
+  async function addNewUser() {
 
-    const {data:newUser} = await axios.post("http://localhost:3005/users",{
-    name:inputName.current.value,
-    age :inputAge.current.value,  
+    const { data: newUser } = await axios.post("http://localhost:3005/users", {
+      name: inputName.current.value,
+      age: inputAge.current.value,
     });
-      
-      //console.log(newUser)
-      setUsers(newUser);  
-   }
-  
-   function deleteUser(userid) {
-      console.log( "Oi, fui chamada para excluir")
-      console.log(userid)
-      const addNewUsers=users.filter(user=>user.id!==userid)
-      setUsers(addNewUsers)
-   }
 
-   return (
+
+    setUsers(...users, newUser);
+
+
+  }
+  useEffect(() => {
+  console.log("fui cahamado")
+    async function fetchUsers() {
+      const { data: newUsers } = await axios.get("http://localhost:3005/users");
+      setUsers(newUsers);
+    }
+    fetchUsers();
+  }, [])
+
+  function deleteUser(userid) {
+    console.log("Oi, fui chamada para excluir")
+    console.log(userid)
+    const addNewUsers = users.filter(user => user.id !== userid)
+
+
+    setUsers(addNewUsers)
+  }
+
+  return (
     <Container>
-      <Image alt="logo-casal1" src={Casal1}/>
+      <Image alt="logo-casal1" src={Casal1} />
 
-         <ContainerItens>
+      <ContainerItens>
 
-             <H1>Olá React</H1>
+        <H1>React-Front-End via Browser 14-10 15:55</H1>
 
-            <Inputlabel> Nome</Inputlabel>
-            <Input ref={inputName} placeholder="Nome"/>
-            
-            <Inputlabel>Idade</Inputlabel>
-            <Input ref={inputAge} placeholder="Idade"/>
-                    
-      <Button onClick={addNewUser}> 
-              Cadastrar <img alt="Seta" src={Arrow} />
-      </Button>
-             
-          <ul>
 
-            {users.map((user)=> (
+        <Inputlabel> Nome</Inputlabel>
+        <Input ref={inputName} placeholder="Nome" />
 
-              <User key={ user.id } >
-                 
-                  <p>{user.name}</p> <p> { user.age}</p>
+        <Inputlabel>Idade</Inputlabel>
+        <Input ref={inputAge} placeholder="Idade" />
 
-                  <button onClick={()=>deleteUser(user.id)}>
-                   <img src={Trash} alt="lixo"/>
-                  </button>
+        <Button onClick={addNewUser}>
+          Cadastrar <img alt="Seta" src={Arrow} />
+        </Button>
+        console.log(res.json())
+
+        <ul>
+
+          {users.map((user) => (
+
+            <User key={user.id} >
+
+              <p>{user.name}</p> <p> {user.age}</p>
+
+              <button onClick={() => deleteUser(user.id)}>
+                <img src={Trash} alt="lixo" />
+              </button>
             </User>
           ))}
         </ul>      
-         
-     </ContainerItens>         
-   </Container>
 
- );
-  }
+      </ContainerItens>
+    </Container>
+
+  );
+}
 export default App
